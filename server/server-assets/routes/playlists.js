@@ -2,17 +2,17 @@ var router = require('express').Router()
 var Playlists = require('../models/playlist')
 var session = require('../auth/session')
 
-router.get('/api/playlists', (req, res, next) => {
-  Playlists.find({})
-    .then(playlists => {
-      res.status(200).send(playlists)
-    })
-    .catch(err => {
-      res.status(400).send(err)
-    })
-})
+// router.get('/api/playlists', (req, res, next) => {
+//   Playlists.find({})
+//     .then(playlists => {
+//       res.status(200).send(playlists)
+//     })
+//     .catch(err => {
+//       res.status(400).send(err)
+//     })
+// })
 
-router.get('/api/playlists/:id', (req, res, next) => {
+router.get('/api/playlists/:id?', (req, res, next) => {
   if (req.params.id) {
     Playlists.findById(req.params.id)
       .then(playlist => {
@@ -21,14 +21,14 @@ router.get('/api/playlists/:id', (req, res, next) => {
       .catch(err => {
         return res.status(400).send(err)
       })
-//   } else {
-//     Playlists.find({})
-//       .then(playlist => {
-//         res.status(200).send(playlist)
-//       })
-//       .catch(err => {
-//         res.status(400).send(err)
-//       })
+  } else {
+    Playlists.find({})
+      .then(playlist => {
+        return res.status(200).send(playlist)
+      })
+      .catch(err => {
+        return res.status(400).send(err)
+      })
   }
 })
 
@@ -37,10 +37,10 @@ router.post('/api/playlists', (req, res, next) => {
   var playlist = req.body
   Playlists.create(playlist)
     .then(newPlaylist => {
-      res.status(200).send(newPlaylist)
+      return res.status(200).send(newPlaylist)
     })
     .catch(err => {
-      res.status(400).send(err)
+      return res.status(400).send(err)
     })
 })
 
@@ -55,9 +55,10 @@ router.delete('/api/playlists/:id', (req, res, next) => {
     })
 })
 
-// Adding song to a specific playlist
-router.put('/api/playlists/:id', (req, res, next) => {
-  Playlists.findById(req.params.playlistId, req.body).then(playlist => {
+// Adding song to a specific playlist Req.body will be a single song object
+router.put('/api/playlists/:id/songs', (req, res, next) => {
+  Playlists.findById(req.params.id)
+  .then(playlist => {
     playlist.songs.$addToSet(req.body)
     playlist.save()
       .then(() => {
@@ -69,8 +70,19 @@ router.put('/api/playlists/:id', (req, res, next) => {
   })
 })
 
+// Replace entire playlist with updated playlist
+router.put('api/playlists/:id', (req, res) => {
+  Playlists.findByIdAndUpdate(req.params.id, req.body, {new: true})
+  .then(playlist =>{
+    res.send(playlist)
+  })
+  .catch(err =>{
+    res.status(400).send(err)
+  })
+})
+
 // Get the songs of a specific playlist
-router.get('/api/playlists/:id', (req, res, next) => {
+router.get('/api/playlists/:id/songs', (req, res, next) => {
   Playlists.findById(req.params.id)
     .then(playlist => {
       res.status(200).send(playlist)
