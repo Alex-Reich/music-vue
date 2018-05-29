@@ -33,11 +33,11 @@ app.use(playlists.router)
 //     next()
 //   })
 
-// app.get('*', (req, res, next) => {
-//     res.status(404).send({
-//       error: 'No matching routes'
-//     })
-//   })
+app.get('*', (req, res, next) => {
+    res.status(404).send({
+      error: 'No matching routes'
+    })
+  })
   
 app.listen(port, () => {
   console.log('server running on port', port)

@@ -58,8 +58,8 @@ router.delete('/api/playlists/:id', (req, res, next) => {
 // Adding song to a specific playlist Req.body will be a single song object
 router.put('/api/playlists/:id/songs', (req, res, next) => {
   Playlists.findById(req.params.id)
-  .then(playlist => {
-    playlist.songs.$addToSet(req.body)
+  .then(function (playlist) {
+    playlist.songs.addToSet(req.body)
     playlist.save()
       .then(() => {
         res.send(playlist)
@@ -71,9 +71,9 @@ router.put('/api/playlists/:id/songs', (req, res, next) => {
 })
 
 // Replace entire playlist with updated playlist
-router.put('api/playlists/:id', (req, res) => {
+router.put('/api/playlists/:id', (req, res) => {
   Playlists.findByIdAndUpdate(req.params.id, req.body, {new: true})
-  .then(playlist =>{
+  .then(playlist=>{
     res.send(playlist)
   })
   .catch(err =>{
