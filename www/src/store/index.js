@@ -6,12 +6,12 @@ import store from '../store'
 
 
 let api = axios.create({
-    baseURL: 'mongodb://student:student@ds016298.mlab.com:16298/music-vue',
+    baseURL: 'http://localhost:3000/api',
     timeout: 3000
 })
 
 let musicApi = axios.create({
-    baseURL: 'https://itunes.apple.com/',
+    baseURL: 'https://itunes.apple.com',
     timeout: 3000
 })
 
@@ -21,13 +21,14 @@ function swapUrlSize(url, pixels) {
     var sizeString = `${pixels}x${pixels}`;
     var newURL = url.replace("60x60", sizeString);
     return newURL;
-  }
+}
 
 export default new vuex.Store({
     state: {
         searchResults: [],
-        playlist: [],
-        user: {}
+        playlist: {},
+        user: {},
+        allPlaylists: []
     },
     mutations: {
         setSearchResults(state, searchResults) {
@@ -39,6 +40,13 @@ export default new vuex.Store({
         removeSong(state, indexToRemove) {
             state.playlist.splice(indexToRemove, 1)
         },
+        setAllPlaylists(state, playlists) {
+            state.allPlaylists = playlists
+        },
+        setPlaylist(state, playlist){
+            console.log(playlist)
+            state.playlist = playlist
+        } 
     },
     actions: {
         addSong({ dispatch, commit, state }, song) {
@@ -48,23 +56,23 @@ export default new vuex.Store({
                     message: 'That song is already in your list'
                 })
             }
-            api.put('/playlist/' + song._id, song)
-            .then(res => {
-                console.log(res)
-            })
-            // old code i used
-            // commit('addSong', song)
+            api.put('/playlists/'+state.playlist._id+'/songs', song)
+                .then(res => {
+                    commit('addSong', song)
+                })
         },
-        removeSong({dispatch, commit, state}, song) {
-            var index = state.playlist.findIndex(s=> s.id==song.id)
-            commit('removeSong', index)    
+        removeSong({ dispatch, commit, state }, song) {
+            api.delete('/playlists/songs' + song._id)
+            .then(res =>{
+                commit('removeSong', res.data)
+            })
         },
         showNotification({
             commit
         }, notification) {
             console.log(notification)
         },
-        findMusic({ commit, dispatch }, query) {
+        findMusic({ dispatch, commit  }, query) {
             musicApi.get('search?media=music&term=' + query)
                 .then(res => {
                     console.log(res.data.results)
@@ -79,10 +87,29 @@ export default new vuex.Store({
                             preview: song.previewUrl,
                             id: song.trackId
                         }
-                        });
-                    
-                            commit('setSearchResults', songList)
-                    }).catch(err => dispatch('showNotification', err))
-                }
+                    });
+
+                    commit('setSearchResults', songList)
+                }).catch(err => dispatch('showNotification', err))
+        },
+        createPlaylist({dispatch, commit}, playlist) {
+            api.post('playlists', playlist)
+            .then(res =>{
+                dispatch('getAllPlaylists')
+            })
+        },
+        getAllPlaylists({dispatch, commit}){
+            api.get('/playlists')
+            .then(res =>{
+                commit('setAllPlaylists', res.data)
+            })
+        },
+        deletePlaylist({dispatch, commit}, playlist) {
+            console.log("you made it")
+            api.delete('/playlists/'+playlist._id, playlist)
+            .then(res=>{
+                dispatch('getAllPlaylists')
+            })
+        }
     }
-    })
+})

@@ -1,47 +1,54 @@
 <template>
     <div class="">
-        <ol class="col-sm-6">
-            <h4>My Playlist</h4>
-            <li v-for="song in list">
-                <div class="card align-items-center card-bg">
-                    <div class="card-body">
-                        <p>Artist: {{song.artist}}</p>
-                        <p>Song: {{song.title}}</p>
-                        <audio controls controlsList="nodownload">
-                            <source :src="song.preview" type="audio/ogg"> Your browser does not support the audio tag.
-                        </audio>
-                        <button @click="handleButton(song)">{{buttonText}}</button>
-                    </div>
-                </div>
-            </li>
-        </ol>
+        <h4>My Playlists</h4>
+      <form @submit.prevent="createPlaylist">
+          <input type="text" name="title" v-model="playlist.title">
+          <button type="submit">Create Playlist</button>
+      </form>
+      <ol>
+          <li v-for="playlist in allPlaylists">
+            <h1>{{playlist.title}}</h1>
+            <button @click="selectPlaylist(playlist)">Select playlist</button>
+            <button @click="deletePlaylist(playlist)">Delete playlist</button>
+          </li>
+      </ol>
+
     </div>
 </template>
 
 <script>
     export default {
         name: 'myPlaylist',
-        props: {
-            list: {
-                type: Array,
-                required: true
-            },
-            buttonText: {
-                type: String,
-                required: true
-            },
-            handleButton: {
-                type: Function,
-                required: true
-            }
-        },
         data() {
             return {
-
+                playlist: {
+                    title: ''
+                }
             }
         },
-        computed: {},
-        methods: {}
+        mounted(){
+          this.$store.dispatch('getAllPlaylists')  
+        },
+        computed: {
+            allPlaylists(){
+                return this.$store.state.allPlaylists
+            },
+            results(){
+                return this.$store.state.playlist
+            }
+        },
+        // Finish this method
+        methods: {
+            createPlaylist(){
+                this.$store.dispatch('createPlaylist', this.playlist)
+            },
+            selectPlaylist(playlist){
+                this.$store.commit('setPlaylist', playlist)
+            },
+            deletePlaylist(playlist){
+                this.$store.dispatch('deletePlaylist', playlist)
+            }
+        }
     }
 
 </script>

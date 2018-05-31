@@ -18,10 +18,15 @@
         <hr>
         <div class="myPlaylist">
           <div class="row">
-            <myPlaylist :list="myPlaylist" button-text="Remove from playlist" :handleButton="removeSong"></myPlaylist>
           </div>
+            <myPlaylist></myPlaylist>
+            <div class="row">
+              <div> {{playlist.title}}</div>
+            </div>
+
         </div>
       </div>
+
 
 
 
@@ -30,9 +35,9 @@
 </template>
 
 <script>
-  // Ask Wes about this import section
   import searchResults from './searchResults.vue'
   import myPlaylist from './myPlaylist.vue'
+  import songs from './songs.vue'
 
   export default {
     name: 'Home',
@@ -43,14 +48,15 @@
     data() {
       return {
         query: '',
-        artist: ''
+        artist: '',
+        switch: true
       }
     },
     computed: {
       searchResults() {
         return this.$store.state.searchResults
       },
-      myPlaylist() {
+      playlist(){
         return this.$store.state.playlist
       }
     },
@@ -73,14 +79,18 @@
 <style scoped>
   .songs-section {
     display: grid;
-    grid-template-areas: "results myPlaylist"
+    grid-template-areas: "results playlists activePlaylist"
   }
 
   .results {
     grid-area: results
   }
 
-  .myPlaylist {
-    grid-area: myPlaylist
+  .playlists {
+    grid-area: playlists
+  }
+
+  .activePlaylist {
+    grid-area: activePlaylist
   }
 </style>

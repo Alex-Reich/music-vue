@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="searchResults container">
     <ol>
       <li v-for="song in list" class="row">
         <div class="col">
@@ -43,12 +43,11 @@
         required: true
       }
     },
-    data() {
-      return {
-
+    computed: {
+      results(){
+        return this.$store.state.searchResults
       }
     },
-    computed: {},
     methods: {}
   }
 

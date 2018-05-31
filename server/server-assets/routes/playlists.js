@@ -56,30 +56,32 @@ router.delete('/api/playlists/:id', (req, res, next) => {
 })
 
 // Adding song to a specific playlist Req.body will be a single song object
-router.put('/api/playlists/:id/songs', (req, res, next) => {
+// Failing because it is looking for a playlist by id
+router.put('/api/playlists/songs', (req, res, next) => {
   Playlists.findById(req.params.id)
-  .then(function (playlist) {
-    playlist.songs.addToSet(req.body)
-    playlist.save()
-      .then(() => {
-        res.send(playlist)
-      })
-      .catch(err => {
-        res.status(400).send(err)
-      })
-  })
+    .then(function (playlist) {
+      playlist.songs.addToSet(req.body)
+      playlist.save()
+        .then(() => {
+          res.send(playlist)
+        })
+        .catch(err => {
+          res.status(400).send(err)
+        })
+    })
+    // Playlists[0].push(req.body)
 })
 
 // Replace entire playlist with updated playlist
-router.put('/api/playlists/:id', (req, res) => {
-  Playlists.findByIdAndUpdate(req.params.id, req.body, {new: true})
-  .then(playlist=>{
-    res.send(playlist)
-  })
-  .catch(err =>{
-    res.status(400).send(err)
-  })
-})
+// router.put('/api/playlists/:id', (req, res) => {
+//   Playlists.findByIdAndUpdate(req.params.id, req.body, { new: true })
+//     .then(playlist => {
+//       res.send(playlist)
+//     })
+//     .catch(err => {
+//       res.status(400).send(err)
+//     })
+// })
 
 // Get the songs of a specific playlist
 router.get('/api/playlists/:id/songs', (req, res, next) => {
@@ -89,6 +91,23 @@ router.get('/api/playlists/:id/songs', (req, res, next) => {
     })
     .catch(err => {
       res.status(400).send(err)
+    })
+})
+// Delete a song
+router.delete('/api/playlists/:id/songs/:songId', (req, res, next) => {
+  Playlists.findById(req.params.id)
+    .then(function (playlist) {
+      let song = playlist.songs.id(req.params.songId)
+      if (song){
+        song.remove()
+      }
+      playlist.save()
+        .then(() => {
+          res.send(playlist)
+        })
+        .catch(err => {
+          res.status(400).send(err)
+        })
     })
 })
 
