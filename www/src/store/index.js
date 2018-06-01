@@ -36,7 +36,6 @@ export default new vuex.Store({
         },
         addSong(state, song) {
             state.playlist.push(song)
-            state.playlist = playlist
         },
         removeSong(state, indexToRemove) {
             state.playlist.splice(indexToRemove, 1)
@@ -60,7 +59,7 @@ export default new vuex.Store({
             api.put('/playlists/'+state.playlist._id+'/songs', song)
                 .then(res => {
                     commit('addSong', song)
-                    commit('setPlaylist')
+                    commit('setPlaylist', this.playlist)
                 })
         },
         removeSong({ dispatch, commit, state }, song) {
