@@ -2,7 +2,6 @@ import vue from 'vue'
 import vuex from 'vuex'
 import axios from 'axios'
 import router from '../router'
-import store from '../store'
 
 
 let api = axios.create({
@@ -93,8 +92,9 @@ export default new vuex.Store({
                     commit('setSearchResults', songList)
                 }).catch(err => dispatch('showNotification', err))
         },
-        createPlaylist({dispatch, commit}, playlist) {
-            api.post('playlists', playlist)
+        createPlaylist({dispatch}, playlist) {
+            debugger
+            api.post('/playlists', playlist)
             .then(res =>{
                 dispatch('getAllPlaylists')
             })

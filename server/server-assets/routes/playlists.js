@@ -12,7 +12,8 @@ var session = require('../auth/session')
 //     })
 // })
 
-router.get('/api/playlists/:id?', (req, res, next) => {
+router.get('/api/playlists/', (req, res, next) => {
+  debugger
   if (req.params.id) {
     Playlists.findById(req.params.id)
       .then(playlist => {
