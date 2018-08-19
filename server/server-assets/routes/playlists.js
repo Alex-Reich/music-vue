@@ -13,10 +13,10 @@ var session = require('../auth/session')
 // })
 
 router.get('/api/playlists/', (req, res, next) => {
-  debugger
   if (req.params.id) {
     Playlists.findById(req.params.id)
-      .then(playlist => {
+    .then(playlist => {
+      debugger
         return res.status(200).send(playlist)
       })
       .catch(err => {

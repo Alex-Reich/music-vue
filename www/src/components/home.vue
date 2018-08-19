@@ -17,12 +17,15 @@
         </div>
         <hr>
         <div class="myPlaylist">
+
+          <myPlaylist></myPlaylist>
           <div class="row">
-          </div>
-            <myPlaylist></myPlaylist>
-            <div class="row">
-              <div> {{playlist.title}}</div>
+            <div class="col">
+              <h1>ACTIVE PLAYLIST</h1>
+              <h1 class="playlistTitle">{{playlist.title}}</h1>
             </div>
+
+          </div>
 
         </div>
       </div>
@@ -56,7 +59,7 @@
       searchResults() {
         return this.$store.state.searchResults
       },
-      playlist(){
+      playlist() {
         return this.$store.state.playlist
       }
     },
@@ -80,6 +83,10 @@
   .songs-section {
     display: grid;
     grid-template-areas: "results playlists activePlaylist"
+  }
+
+  .playlistTitle {
+    text-decoration-line: underline;
   }
 
   .results {
